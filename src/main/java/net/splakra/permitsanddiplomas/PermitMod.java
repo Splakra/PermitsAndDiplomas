@@ -1,4 +1,4 @@
-package net.plakra.permitsanddiplomas;
+package net.splakra.permitsanddiplomas;
 
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
@@ -7,11 +7,15 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.splakra.permitsanddiplomas.config.CommonConfig;
+import net.splakra.permitsanddiplomas.item.ModCreativeModeTabs;
+import net.splakra.permitsanddiplomas.item.ModItems;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -27,6 +31,10 @@ public class PermitMod
     {
         IEventBus modEventBus = context.getModEventBus();
 
+        ModCreativeModeTabs.register(modEventBus);
+
+        ModItems.register(modEventBus);
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -35,6 +43,8 @@ public class PermitMod
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
+
+        context.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, "permits_and_diplomas-common-config.toml");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -45,7 +55,6 @@ public class PermitMod
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

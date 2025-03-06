@@ -1,0 +1,11 @@
+{
+  "item.permits_and_diplomas.permit_envelope_1": "Unopened Permit",
+  "item.permits_and_diplomas.permit_envelope_2": "Unopened Permit",
+  "item.permits_and_diplomas.permit_envelope_3": "Unopened Permit",
+  "item.permits_and_diplomas.permit_envelope_4": "Unopened Permit",
+
+  "tooltip.permits_and_diplomas.permit.description_prefix": "Claimed by: ",
+  "tooltip.permits_and_diplomas.permit.description_default": "Unclaimed",
+
+  "creativeTab.permit_tab": "Permits and Diplomas"
+}
