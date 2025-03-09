@@ -1,7 +1,10 @@
 package net.splakra.permitsanddiplomas.item.custom;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.splakra.permitsanddiplomas.util.CustomUtils;
+import net.splakra.permitsanddiplomas.util.StyleCreator;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,25 +22,39 @@ public class PermitItem extends Item {
 
     public PermitItem(Properties pProperties) {
         super(pProperties);
-        pProperties.stacksTo(1);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack itemStack = pPlayer.getItemInHand(pUsedHand);
-
-        if (!pLevel.isClientSide()) {
+        if (!pPlayer.getItemInHand(CustomUtils.GetOtherHand(pUsedHand)).getItem().getClass().equals(PermitEditorItem.class)) {
             CompoundTag tag = itemStack.getOrCreateTag();
             boolean isClaimed = tag.getBoolean("claimed");
 
-            if (!isClaimed) {
-                ClaimPermit(itemStack, pPlayer);
-            } else if (pPlayer.isCrouching()) {
-                UnclaimPermit(itemStack, pPlayer);
+            if (!pLevel.isClientSide()) {
+                if (!isClaimed) {
+                    ClaimPermit(itemStack, pPlayer);
+                } else if (pPlayer.isShiftKeyDown()) {
+                    if (IsClaimedPlayer(itemStack, pPlayer)) {
+                        UnclaimPermit(itemStack, pPlayer);
+                    } else {
+                        pPlayer.sendSystemMessage(Component.literal("This is already owned by ").append(tag.getString("owner")).append("!"));
+                    }
+                }
+            } else {
+                if (!isClaimed) {
+                    pPlayer.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.3f, 1f);
+                }
             }
-        }
 
-        return InteractionResultHolder.success(itemStack);
+            return InteractionResultHolder.success(itemStack);
+        }
+        return InteractionResultHolder.pass(itemStack);
+    }
+
+    public boolean IsClaimedPlayer(ItemStack pStack, Player pPlayer) {
+        CompoundTag tag = pStack.getTag();
+        return tag.getString("owner").equals(pPlayer.getScoreboardName());
     }
 
     public void ClaimPermit(ItemStack pItem, Player pPlayer){
@@ -55,13 +74,40 @@ public class PermitItem extends Item {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         CompoundTag tag = pStack.getTag();
+
         if (tag != null && tag.getBoolean("claimed")) {
             String owner = tag.getString("owner");
-            pTooltipComponents.add(Component.translatable("tooltip.permits_and_diplomas.permit.description_prefix").append(owner));
+            pTooltipComponents.add(Component.translatable("tooltip.permits_and_diplomas.permit.description_prefix").append(owner).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
         } else {
             pTooltipComponents.add(Component.translatable("tooltip.permits_and_diplomas.permit.description_default"));
         }
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
     }
 
+    @Override
+    public Component getName(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+
+        if (tag != null && tag.contains("rarity") && tag.contains("content")) {
+            String prefix = tag.getString("rarity");
+            String content = tag.getString("content");
+            return Component.literal(prefix)
+                    .append(" Permit for ")
+                    .append(content).withStyle(StyleCreator.TierToColor(StyleCreator.RarityToTier(prefix)));
+        }
+
+        // Default name if no custom data exists
+        return super.getName(stack);
+    }
+
+    @Override
+    public boolean isFoil(ItemStack pStack) {
+        CompoundTag tag = pStack.getTag();
+        if (tag != null && tag.contains("claimed")) {
+            return tag.getBoolean("claimed");
+        }
+
+        //Use original function if its not claimed
+        return super.isFoil(pStack);
+    }
 }

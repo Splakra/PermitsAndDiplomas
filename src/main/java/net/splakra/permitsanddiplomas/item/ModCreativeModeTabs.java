@@ -21,6 +21,16 @@ public class ModCreativeModeTabs {
                         pOutput.accept((ModItems.PERMIT_ENVELOPE_2.get()));
                         pOutput.accept((ModItems.PERMIT_ENVELOPE_3.get()));
                         pOutput.accept((ModItems.PERMIT_ENVELOPE_4.get()));
+
+                        pOutput.accept((ModItems.PERMIT_LETTER_1.get()));
+                        pOutput.accept((ModItems.PERMIT_LETTER_2.get()));
+                        pOutput.accept((ModItems.PERMIT_LETTER_3.get()));
+                        pOutput.accept((ModItems.PERMIT_LETTER_4.get()));
+
+                        pOutput.accept((ModItems.DATA_DELETE_ITEM).get());
+
+                        pOutput.accept((ModItems.PERMIT_EDITOR_ITEM.get()));
+
                     })
                     .build());
 

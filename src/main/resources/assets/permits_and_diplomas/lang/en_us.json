@@ -4,8 +4,18 @@
   "item.permits_and_diplomas.permit_envelope_3": "Unopened Permit",
   "item.permits_and_diplomas.permit_envelope_4": "Unopened Permit",
 
+  "item.permits_and_diplomas.permit_letter_1": "Unclaimed Permit of Nothing",
+  "item.permits_and_diplomas.permit_letter_2": "Unclaimed Permit of Nothing",
+  "item.permits_and_diplomas.permit_letter_3": "Unclaimed Permit of Nothing",
+  "item.permits_and_diplomas.permit_letter_4": "Unclaimed Permit of Nothing",
+
+  "item.permits_and_diplomas.data_delete_item": "Data Delete Item",
+  "item.permits_and_diplomas.permit_editor_item": "Permit Editor",
+
+
   "tooltip.permits_and_diplomas.permit.description_prefix": "Claimed by: ",
   "tooltip.permits_and_diplomas.permit.description_default": "Unclaimed",
 
   "creativeTab.permit_tab": "Permits and Diplomas"
 }
+
