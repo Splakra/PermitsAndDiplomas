@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.splakra.permitsanddiplomas.PermitMod;
+import net.splakra.permitsanddiplomas.network.PacketHandler;
+import net.splakra.permitsanddiplomas.network.SavePermitTextPacket;
 import net.splakra.permitsanddiplomas.util.CustomUtils;
 
 public class PermitEditorScreen extends AbstractContainerScreen<PermitEditorMenu> {
@@ -31,7 +33,7 @@ public class PermitEditorScreen extends AbstractContainerScreen<PermitEditorMenu
         // Confirm Button
         this.addRenderableWidget(
                 Button.builder(Component.literal("Confirm"), button -> {
-                            menu.saveTextToOffhand(textField.getValue());
+                            PacketHandler.INSTANCE.sendToServer(new SavePermitTextPacket(textField.getValue())); // Send packet
                             this.minecraft.player.closeContainer();
                         })
                         .bounds(this.leftPos + 10, this.topPos + 50, 60, 20)

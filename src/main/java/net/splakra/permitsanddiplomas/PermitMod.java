@@ -1,21 +1,21 @@
 package net.splakra.permitsanddiplomas;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.splakra.permitsanddiplomas.config.CommonConfig;
 import net.splakra.permitsanddiplomas.item.ModCreativeModeTabs;
 import net.splakra.permitsanddiplomas.item.ModItems;
 import net.splakra.permitsanddiplomas.storage.WorldDataManager;
+import net.splakra.permitsanddiplomas.ui.CustomInventoryScreen;
 import net.splakra.permitsanddiplomas.ui.ModMenus;
 import net.splakra.permitsanddiplomas.network.PacketHandler;
+import net.splakra.permitsanddiplomas.ui.ModScreens;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -32,6 +32,7 @@ public class PermitMod
     public PermitMod(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
+        IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
         //Register the new creative mode tabs
         ModCreativeModeTabs.register(modEventBus);
@@ -46,6 +47,12 @@ public class PermitMod
         PacketHandler.register();
         ModMenus.register(modEventBus);
 
+        // ─── FIX #1: register our ScreenEvent listener ───
+        forgeEventBus.register(ClientModEvents.class);
+
+        // ─── FIX #2: register screen<->menu bindings on the MOD bus ───
+        modEventBus.addListener(ModScreens::onClientSetup);
+
         //Register the config
         context.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, "permits_and_diplomas-common-config.toml");
     }
@@ -54,17 +61,7 @@ public class PermitMod
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
+        LOGGER.info("Server is starting! Setting up WorldDataManager.");
         WorldDataManager.setServer(event.getServer());
-    }
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-
-        }
     }
 }

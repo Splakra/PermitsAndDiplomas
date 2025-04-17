@@ -7,6 +7,7 @@ import net.splakra.permitsanddiplomas.PermitMod;
 
 public class PacketHandler {
     private static final String PROTOCOL_VERSION = "1";
+
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(PermitMod.MOD_ID, "network"),
             () -> PROTOCOL_VERSION,
@@ -14,9 +15,10 @@ public class PacketHandler {
             PROTOCOL_VERSION::equals
     );
 
+    private static int id = 0;
+
     public static void register() {
-        int id = 0;
-        INSTANCE.registerMessage(id++, SyncPermitDataPacket.class, SyncPermitDataPacket::toBytes,
-                SyncPermitDataPacket::new, SyncPermitDataPacket::handle);
+        INSTANCE.registerMessage(id++, SavePermitTextPacket.class, SavePermitTextPacket::encode, SavePermitTextPacket::new, SavePermitTextPacket::handle);
+        INSTANCE.registerMessage(id++, OpenPermitInfoScreenPacket.class, OpenPermitInfoScreenPacket::encode, OpenPermitInfoScreenPacket::decode, OpenPermitInfoScreenPacket::handle);
     }
 }
