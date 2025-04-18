@@ -23,9 +23,9 @@ public class CommonConfig {
 
     public static final ForgeConfigSpec.ConfigValue<List<String>> TIER_2_LIST = BUILDER
             .comment("The List holding all the Items from Tier 2")
-            .define("Tier 2 List", List.of("Light Sources", "Glass", "Potion Ingredients",
-                    "Paper", "Concrete", "Quartz", "Belts and Chains", "Dyes", "Fluid Stuff", "Gravel",
-                    "Cardboard", "Hostile Mob Drops", "Basic Nether Blocks", "Train Components", "Sand"));
+            .define("Tier 2 List", List.of("Light Sources", "Glass", "Potions",
+                    "Concrete", "Quartz", "Belts and Chains", "Dyes", "Fluid Stuff", "Gravel",
+                    "Packages", "Hostile Mob Drops", "Basic Nether Blocks", "Train Components", "Sand"));
 
     public static final ForgeConfigSpec.ConfigValue<String> TIER_3_PREFIX = BUILDER
             .comment("The Prefix for all Tier 3 items")
@@ -34,7 +34,7 @@ public class CommonConfig {
     public static final ForgeConfigSpec.ConfigValue<List<String>> TIER_3_LIST = BUILDER
             .comment("The List holding all the Items from Tier 3")
             .define("Tier 3 List", List.of("Enchanted Books", "Rose Quartz", "Copper", "Zinc", "Precision Mechanisms",
-                    "Vaults", "Bottles o' Enchanting", "Equipment", "Honey and Slime", "Gears and Gearboxes"));
+                    "Vaults", "Enchanting Bottles", "Equipment", "Honey and Slime", "Gears and Gearboxes"));
 
     public static final ForgeConfigSpec.ConfigValue<String> TIER_4_PREFIX = BUILDER
             .comment("The Prefix for all Tier 4 items")
@@ -43,7 +43,12 @@ public class CommonConfig {
     public static final ForgeConfigSpec.ConfigValue<List<String>> TIER_4_LIST = BUILDER
             .comment("The List holding all the Items from Tier 4")
             .define("Tier 4 List", List.of("Iron", "Gold", "Rockets", "Andesite Alloy", "Brass",
-                    "Shulker Boxes", "All Stone Types", "All Wood Blocks", "Redstone Bits", "Food"));
+                    "Shulker Boxes", "All Stone Types", "All Wood Blocks", "Redstone Bits", "Food", "Stock Factory",
+                    "Architecture", "Andesite Machines"));
+
+    public static final ForgeConfigSpec.ConfigValue<List<List<String>>> ENTRIES_ITEMS_LIST = BUILDER
+            .comment("The List with all the items to every permit. The 0th Entry Specifies the Permits Name!")
+            .define("Entries Items", ItemEntries.allItemEntries);
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
 

@@ -64,6 +64,7 @@ public class PermitItem extends Item {
         CompoundTag tag = pItem.getOrCreateTag();
         tag.putBoolean("claimed", true);
         tag.putString("owner", pPlayer.getScoreboardName());
+        WorldDataManager.getOverworldData().changePermitEntryPlayer(tag.getString("content"), pPlayer.getScoreboardName());
 
         pPlayer.sendSystemMessage(Component.literal("Claimed!"));
     }
@@ -72,6 +73,7 @@ public class PermitItem extends Item {
         CompoundTag tag = pItem.getOrCreateTag();
         tag.putBoolean("claimed", false);
         tag.remove("owner");
+        WorldDataManager.getOverworldData().unclaimPermitEntry(tag.getString("content"));
 
         pPlayer.sendSystemMessage(Component.literal("Unclaimed!"));
     }

@@ -1,14 +1,12 @@
 package net.splakra.permitsanddiplomas.storage;
 
-import net.minecraft.client.main.GameConfig;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.registries.GameData;
+import net.splakra.permitsanddiplomas.network.SavePermitDataPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,8 @@ public class DataStorage extends SavedData {
     private List<String> usedPermits = new ArrayList<>();
 
     private List<PermitEntry> permitEntries = new ArrayList<>();
+
+    private List<String> overwrittenPermits = new ArrayList<>();
 
     @Override
     public CompoundTag save(CompoundTag pCompoundTag) {
@@ -34,6 +34,10 @@ public class DataStorage extends SavedData {
             permitEntryTag.putString("items", permitEntries.get(i).getItemsAsString());
             pCompoundTag.put("permitEntry_" + i, permitEntryTag);
         }
+        pCompoundTag.putInt("overwrittenPermitsSize", overwrittenPermits.size());
+        for (int i = 0; i < overwrittenPermits.size(); i++) {
+            pCompoundTag.putString("overwrittenPermit_" + i, overwrittenPermits.get(i));
+        }
         return pCompoundTag;
     }
 
@@ -43,6 +47,11 @@ public class DataStorage extends SavedData {
 
         for (int i = 0; i < size; i++) {
             dataStorage.usedPermits.add(pCompoundTag.getString("usedPermit_" + i));
+        }
+
+        size = pCompoundTag.getInt("overwrittenPermitsSize");
+        for (int i = 0; i < size; i++) {
+            dataStorage.overwrittenPermits.add(pCompoundTag.getString("overwrittenPermit_" + i));
         }
 
         size = pCompoundTag.getInt("permitEntriesSize");
@@ -56,7 +65,22 @@ public class DataStorage extends SavedData {
             dataStorage.permitEntries.add(permitEntry);
         }
 
+        dataStorage.loadPermitsFromConfig();
+
         return dataStorage;
+    }
+
+    public void loadPermitsFromConfig(){
+        if (this.permitEntries.isEmpty())
+            this.permitEntries.addAll(PermitEntry.getAllPermitEntriesFromConfig());
+        else {
+            PermitEntry.getAllPermitEntriesFromConfig().stream()
+                    .forEach(permitEntry -> {
+                        if (this.permitEntries.stream()
+                                .noneMatch(entry -> permitEntry.getTitle().equalsIgnoreCase(entry.getTitle()) || overwrittenPermits.contains(entry.getTitle())))
+                            this.permitEntries.add(permitEntry);
+                    });
+        }
     }
 
     public List<String> getUsedPermits() {
@@ -94,14 +118,45 @@ public class DataStorage extends SavedData {
         return permitEntries.stream().filter(permitEntry -> permitEntry.getPlayerName().equalsIgnoreCase("unclaimed")).toList();
     }
 
+    public PermitEntry getPermitEntry(String permitTitle) {
+        return permitEntries.stream().filter(permitEntry -> permitEntry.getTitle().equalsIgnoreCase(permitTitle)).findFirst().orElse(null);
+    }
+
     public void changePermitEntryPlayer(String title, String playerName) {
         PermitEntry permitEntry = getPermitEntries().stream().filter(permitEntry1 -> permitEntry1.getTitle().equalsIgnoreCase(title)).findFirst().orElse(null);
         if (permitEntry != null) {
             permitEntry.setPlayerName(playerName);
+        } else {
         }
         this.setDirty();
     }
     public void unclaimPermitEntry(String title){
         changePermitEntryPlayer(title, "unclaimed");
+    }
+
+    public boolean permitEntriesContain(String title){
+        return permitEntries.stream().anyMatch(permitEntry -> permitEntry.getTitle().equalsIgnoreCase(title));
+    }
+
+    public void clearAllPermitEntries() {
+        this.permitEntries.clear();
+        this.overwrittenPermits.clear();
+        this.setDirty();
+    }
+
+    public void handlePermitChange(SavePermitDataPacket pkt) {
+        CompoundTag tag = pkt.permit.getOrCreateTag();
+        String oldTitle = tag.getString("content");
+        if (!overwrittenPermits.contains(oldTitle))
+            overwrittenPermits.add(oldTitle);
+
+        if (permitEntriesContain(oldTitle)){
+            PermitEntry permitEntry = new PermitEntry(pkt.text, tag.getString("owner"), pkt.filterStacks.stream().map(ItemStack::getItem).toList());
+            int idx = permitEntries.indexOf(getPermitEntry(oldTitle));
+            permitEntries.remove(idx);
+            permitEntries.add(idx, permitEntry);
+        }
+
+        this.setDirty();
     }
 }

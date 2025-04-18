@@ -16,18 +16,18 @@ public class CustomUtils {
         return null;
     }
 
-    public static ItemStack GetItemOfHandByClass(Player pPlayer, Class<?> pItemClass){
-        ItemStack itemToSearch =  pPlayer.getMainHandItem();
-        if (itemToSearch.isEmpty() || !itemToSearch.getItem().getClass().equals(pItemClass)){
-            itemToSearch = pPlayer.getOffhandItem();
+    public static ItemStack GetPermitInHands(Player pPlayer){
+        for (InteractionHand h : InteractionHand.values()) {
+            ItemStack s = pPlayer.getItemInHand(h);
+            if (s.getItem() instanceof PermitItem) {
+                return s;
+            }
         }
-        if (itemToSearch.isEmpty())
-            return ItemStack.EMPTY;
-        return itemToSearch;
+        return ItemStack.EMPTY;
     }
 
-    public static String GetNBTofPermit(Player pPlayer){
-        ItemStack permitItem = CustomUtils.GetItemOfHandByClass(pPlayer, PermitItem.class);
+    public static String GetContentOfPermitInHand(Player pPlayer){
+        ItemStack permitItem = CustomUtils.GetPermitInHands(pPlayer);
         CompoundTag tag = permitItem.getOrCreateTag();
         if (!tag.contains("content")) {
             return "";

@@ -27,6 +27,8 @@ public class DataDeleteItem extends Item {
         if (!pLevel.isClientSide) {
             DataStorage data = WorldDataManager.getOverworldData();
             data.clearUsedPermits();
+            data.clearAllPermitEntries();
+            data.loadPermitsFromConfig();
         }
 
         return InteractionResultHolder.success(itemstack);

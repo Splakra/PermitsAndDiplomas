@@ -2,6 +2,7 @@ package net.splakra.permitsanddiplomas.ui;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -14,7 +15,10 @@ public class ModMenus {
 
     public static final RegistryObject<MenuType<PermitEditorMenu>> PERMIT_EDITOR_MENU =
             MENUS.register("permit_editor", () ->
-                    IForgeMenuType.create(PermitEditorMenu::new)
+                    IForgeMenuType.create(
+                            // (windowId, playerInv, buf) -> your one-and-only constructor:
+                            (windowId, inv, buf) -> new PermitEditorMenu(windowId, inv, new SimpleContainerData(1))
+                    )
             );
 
     public static final RegistryObject<MenuType<PermitInfoMenu>> PERMIT_INFO_MENU =

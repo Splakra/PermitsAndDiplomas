@@ -34,7 +34,7 @@ public class SavePermitTextPacket {
             if (player == null) return; // Ensure player is valid
 
             // Get the item in the offhand
-            ItemStack permitItem = CustomUtils.GetItemOfHandByClass(player, PermitItem.class);
+            ItemStack permitItem = CustomUtils.GetPermitInHands(player);
             if (!permitItem.isEmpty()) {
                 String oldNBT = "";
                 CompoundTag tag = permitItem.getOrCreateTag();

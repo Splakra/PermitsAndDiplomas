@@ -23,7 +23,8 @@ public class PermitEditorItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand pUsedHand) {
-        if (pPlayer.getItemInHand(CustomUtils.GetOtherHand(pUsedHand)).getItem().getClass().equals(PermitItem.class)) {
+        if (pPlayer.getItemInHand(CustomUtils.GetOtherHand(pUsedHand))
+                .getItem() instanceof PermitItem) {
             if (!level.isClientSide) {
                 NetworkHooks.openScreen((ServerPlayer) pPlayer, new MenuProvider() {
                     @Override

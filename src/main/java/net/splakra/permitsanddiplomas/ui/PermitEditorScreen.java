@@ -4,12 +4,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.splakra.permitsanddiplomas.PermitMod;
+import net.splakra.permitsanddiplomas.item.custom.PermitItem;
 import net.splakra.permitsanddiplomas.network.PacketHandler;
-import net.splakra.permitsanddiplomas.network.SavePermitTextPacket;
+import net.splakra.permitsanddiplomas.network.SavePermitDataPacket;
 import net.splakra.permitsanddiplomas.util.CustomUtils;
 
 public class PermitEditorScreen extends AbstractContainerScreen<PermitEditorMenu> {
@@ -26,17 +30,27 @@ public class PermitEditorScreen extends AbstractContainerScreen<PermitEditorMenu
         super.init();
 
         // Text Field
-        this.textField = new EditBox(this.font, this.leftPos + 10, this.topPos + 20, 120, 20, Component.literal(CustomUtils.GetNBTofPermit(this.minecraft.player)));
+        this.textField = new EditBox(this.font, this.leftPos + 178, this.topPos + 24, 120, 20, Component.literal(""));
+        this.textField.setValue(CustomUtils.GetContentOfPermitInHand(getMinecraft().player));
         this.textField.setMaxLength(50);
         this.addRenderableWidget(this.textField);
 
         // Confirm Button
         this.addRenderableWidget(
                 Button.builder(Component.literal("Confirm"), button -> {
-                            PacketHandler.INSTANCE.sendToServer(new SavePermitTextPacket(textField.getValue())); // Send packet
+                            NonNullList<ItemStack> stacks = NonNullList.create();
+                            for (int i = 0; i < 54; ++i) {
+                                ItemStack item = menu.filterInventory.getStackInSlot(i);
+                                if (!(item.equals(ItemStack.EMPTY) || stacks.contains(item))) {
+                                    stacks.add(item.copyWithCount(1));
+                                }
+                            }
+                            ItemStack permitItem = CustomUtils.GetPermitInHands(getMinecraft().player);
+
+                            PacketHandler.INSTANCE.sendToServer(new SavePermitDataPacket(textField.getValue(), stacks, permitItem)); // Send packet
                             this.minecraft.player.closeContainer();
                         })
-                        .bounds(this.leftPos + 10, this.topPos + 50, 60, 20)
+                        .bounds(this.leftPos + 176, this.topPos + 53, 60, 20)
                         .build()
         );
 
@@ -45,14 +59,14 @@ public class PermitEditorScreen extends AbstractContainerScreen<PermitEditorMenu
                 Button.builder(Component.literal("Exit"), button -> {
                             this.minecraft.player.closeContainer();
                         })
-                        .bounds(this.leftPos + 80, this.topPos + 50, 60, 20)
+                        .bounds(this.leftPos + 241, this.topPos + 53, 60, 20)
                         .build()
         );
     }
 
     @Override
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        pGuiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        pGuiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, 320, 220,320, 256);
     }
 
     @Override
