@@ -13,24 +13,27 @@ public class PermitEntry {
     private String title;
     private String playerName;
     private List<Item> items;
+    private boolean isAccomplished = false;
 
-    public PermitEntry(String title, String playerName, List<Item> items) {
+    public PermitEntry(String title, String playerName, List<Item> items, boolean isAccomplished) {
         this.title = title;
         this.playerName = playerName;
         this.items = items;
+        this.isAccomplished = isAccomplished;
     }
 
-    public PermitEntry(String title, String playerName, String items) {
+    public PermitEntry(String title, String playerName, String items, boolean isAccomplished) {
         this.title = title;
         this.playerName = playerName;
         this.items = getItemsFromString(items);
+        this.isAccomplished = isAccomplished;
     }
 
     public static List<PermitEntry> getAllPermitEntriesFromConfig(){
         List<PermitEntry> permitEntries = new ArrayList<>();
         for (var entry : CommonConfig.ENTRIES_ITEMS_LIST.get()){
             String title = entry.get(0);
-            permitEntries.add(new PermitEntry(title, "unclaimed", ItemUtils.getItemsFromList(entry.subList(1, entry.size()))));
+            permitEntries.add(new PermitEntry(title, "unclaimed", ItemUtils.getItemsFromList(entry.subList(1, entry.size())), false));
         }
         return permitEntries;
     }
@@ -82,5 +85,13 @@ public class PermitEntry {
     @Override
     public String toString() {
         return title + " (" + playerName + ") -- " + getItemsAsString();
+    }
+
+    public boolean getAccomplished() {
+        return isAccomplished;
+    }
+
+    public void setAccomplished(boolean accomplished){
+        isAccomplished = accomplished;
     }
 }

@@ -31,6 +31,7 @@ public class DataStorage extends SavedData {
             CompoundTag permitEntryTag = new CompoundTag();
             permitEntryTag.putString("title", permitEntries.get(i).getTitle());
             permitEntryTag.putString("player", permitEntries.get(i).getPlayerName());
+            permitEntryTag.putBoolean("accomplished", permitEntries.get(i).getAccomplished());
             permitEntryTag.putString("items", permitEntries.get(i).getItemsAsString());
             pCompoundTag.put("permitEntry_" + i, permitEntryTag);
         }
@@ -60,7 +61,8 @@ public class DataStorage extends SavedData {
             PermitEntry permitEntry = new PermitEntry(
                     permitEntryTag.getString("title"),
                     permitEntryTag.getString("player"),
-                    permitEntryTag.getString("items")
+                    permitEntryTag.getString("items"),
+                    permitEntryTag.getBoolean("accomplished")
                     );
             dataStorage.permitEntries.add(permitEntry);
         }
@@ -151,12 +153,21 @@ public class DataStorage extends SavedData {
             overwrittenPermits.add(oldTitle);
 
         if (permitEntriesContain(oldTitle)){
-            PermitEntry permitEntry = new PermitEntry(pkt.text, tag.getString("owner"), pkt.filterStacks.stream().map(ItemStack::getItem).toList());
+            PermitEntry permitEntry = new PermitEntry(pkt.text, tag.getString("owner"), pkt.filterStacks.stream().map(ItemStack::getItem).toList(), getPermitEntry(oldTitle).getAccomplished());
             int idx = permitEntries.indexOf(getPermitEntry(oldTitle));
             permitEntries.remove(idx);
             permitEntries.add(idx, permitEntry);
         }
 
         this.setDirty();
+    }
+
+    public void toggleAccomplished(String title) {
+        if (permitEntriesContain(title)){
+            PermitEntry permitEntry = getPermitEntry(title);
+            permitEntry.setAccomplished(!permitEntry.getAccomplished());
+
+            this.setDirty();
+        }
     }
 }

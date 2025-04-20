@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.splakra.permitsanddiplomas.config.CommonConfig;
 import net.splakra.permitsanddiplomas.storage.DataStorage;
 import net.splakra.permitsanddiplomas.storage.WorldDataManager;
 import net.splakra.permitsanddiplomas.util.CustomUtils;
@@ -49,7 +50,6 @@ public class PermitItem extends Item {
                     pPlayer.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.3f, 1f);
                 }
             }
-
             return InteractionResultHolder.success(itemStack);
         }
         return InteractionResultHolder.pass(itemStack);

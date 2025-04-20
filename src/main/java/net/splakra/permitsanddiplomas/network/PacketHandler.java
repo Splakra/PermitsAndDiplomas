@@ -21,10 +21,8 @@ public class PacketHandler {
     private static int id = 0;
 
     public static void register() {
-        //TODO Remove the SavePermitTextPacket
-        INSTANCE.registerMessage(id++, SavePermitTextPacket.class, SavePermitTextPacket::encode, SavePermitTextPacket::new, SavePermitTextPacket::handle);
         INSTANCE.registerMessage(id++, OpenPermitInfoScreenPacket.class, OpenPermitInfoScreenPacket::encode, OpenPermitInfoScreenPacket::decode, OpenPermitInfoScreenPacket::handle);
         INSTANCE.registerMessage(id++, SavePermitDataPacket.class, SavePermitDataPacket::encode, SavePermitDataPacket::decode, SavePermitDataPacket::handle);
-        INSTANCE.registerMessage(id++, SyncPermitPacket.class, SyncPermitPacket::encode, SyncPermitPacket::decode, SyncPermitPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        INSTANCE.registerMessage(id++, PermitAccomplishedPacket.class, PermitAccomplishedPacket::encode, PermitAccomplishedPacket::decode, PermitAccomplishedPacket::handle);
     }
 }
