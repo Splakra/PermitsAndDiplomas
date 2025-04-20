@@ -8,6 +8,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.splakra.permitsanddiplomas.PermitMod;
+import net.splakra.permitsanddiplomas.storage.WorldDataManager;
 
 public class ModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS =
@@ -22,8 +23,8 @@ public class ModMenus {
             );
 
     public static final RegistryObject<MenuType<PermitInfoMenu>> PERMIT_INFO_MENU =
-            MENUS.register("permit_info",
-                    () -> IForgeMenuType.create(PermitInfoMenu::new)
+            MENUS.register("permit_info", () ->
+                    IForgeMenuType.create(PermitInfoMenu::new)
             );
 
 

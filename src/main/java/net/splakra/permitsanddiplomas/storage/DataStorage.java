@@ -14,6 +14,9 @@ import java.util.List;
 
 public class DataStorage extends SavedData {
 
+    public DataStorage() {
+    }
+
     private List<String> usedPermits = new ArrayList<>();
 
     private List<PermitEntry> permitEntries = new ArrayList<>();

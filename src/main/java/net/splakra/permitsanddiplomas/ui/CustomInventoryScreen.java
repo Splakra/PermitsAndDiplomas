@@ -1,10 +1,9 @@
 package net.splakra.permitsanddiplomas.ui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
+
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.splakra.permitsanddiplomas.item.ModItems;
 import net.splakra.permitsanddiplomas.network.OpenPermitInfoScreenPacket;
 import net.splakra.permitsanddiplomas.network.PacketHandler;
 
@@ -13,15 +12,24 @@ public class CustomInventoryScreen extends InventoryScreen {
         super(playerInventory.player);
     }
 
+    CustomIconButton infoButton;
+
     @Override
     protected void init() {
         super.init();
+
         this.addRenderableWidget(
-                Button.builder(Component.literal("Info"), button -> {
+                infoButton = CustomIconButton.builder(ModItems.PERMIT_LETTER_2.get(), button -> {
                             PacketHandler.INSTANCE.sendToServer(new OpenPermitInfoScreenPacket());
                         })
-                        .bounds(this.leftPos + 152, this.topPos + 6, 40, 20) // Feel free to tweak size
-                        .build()
+                .bounds(this.leftPos + this.imageWidth -42, this.topPos + 61, 20, 18)
+                .build()
         );
+    }
+
+    @Override
+    public void containerTick() {
+        infoButton.setX(this.leftPos + this.imageWidth -42);
+        super.containerTick();
     }
 }

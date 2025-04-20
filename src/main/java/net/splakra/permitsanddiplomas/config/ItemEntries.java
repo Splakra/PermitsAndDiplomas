@@ -39,7 +39,7 @@ public class ItemEntries {
             List.of("Quartz", "minecraft:quartz", "minecraft:quartz_block"),
             List.of("Enchanted Books", "minecraft:enchanted_book"),
             List.of("Rose Quartz", "create:electron_tube", "create:polished_rose_quartz", "create:rose_quartz_lamp", "create:display_board"),
-            List.of("Precision Mechanisms", "precision:mechanism"),
+            List.of("Precision Mechanisms", "create:precision_mechanism"),
             List.of("Honey and Slime", "minecraft:honeycomb", "minecraft:honey_bottle", "minecraft:honey_block", "minecraft:honeycomb_block", "create:honey_bucket", "minecraft:slime_ball", "minecraft:slime_block", "create:super_glue"),
             List.of("Enchanting Bottles", "minecraft:experience_bottle", "create_enchantment_industry:hyper_experience_bottle"),
             List.of("Gears and Gearboxes", "create:cogwheel", "create:large_cogwheel", "create:gearbox", "create:shaft"),

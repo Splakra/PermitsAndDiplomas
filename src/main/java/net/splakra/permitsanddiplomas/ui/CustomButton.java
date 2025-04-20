@@ -83,10 +83,6 @@ public class CustomButton extends AbstractButton {
         this.renderString(pGuiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
-//    int i = this.getX() + pWidth;
-//    int j = this.getX() + this.getWidth() - pWidth;
-//    renderScrollingString(pGuiGraphics, pFont, this.getMessage(), i, this.getY(), j, this.getY() + this.getHeight(), pColor);
-
     @Override
     protected void renderScrollingString(GuiGraphics pGuiGraphics, Font pFont, int pWidth, int pColor) {
         FormattedText pText = getMessage();
@@ -96,7 +92,7 @@ public class CustomButton extends AbstractButton {
         int pMinX = this.getX() + pWidth;
         int pMaxX = this.getX() + this.getWidth() - pWidth;
 
-        if (displayItem != null){
+        if (displayItem != null) {
             pGuiGraphics.renderItem(displayItem.getDefaultInstance(), this.getX() + 5, pMinY + 1);
             pMinX += 20;
         }

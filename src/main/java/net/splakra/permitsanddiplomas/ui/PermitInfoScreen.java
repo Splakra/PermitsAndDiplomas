@@ -10,13 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.client.event.InputEvent;
 import net.splakra.permitsanddiplomas.PermitMod;
 import net.splakra.permitsanddiplomas.network.PacketHandler;
 import net.splakra.permitsanddiplomas.network.PermitAccomplishedPacket;
-import net.splakra.permitsanddiplomas.storage.DataStorage;
 import net.splakra.permitsanddiplomas.storage.PermitEntry;
-import net.splakra.permitsanddiplomas.storage.WorldDataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +67,6 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
                         .bounds(this.leftPos + 87, this.topPos + 256, 60, 20)
                         .build()
         );
-
     }
 
     @Override
@@ -89,9 +85,10 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
         int startIndex = (int) (scrollAmount / entryHeight);
         int yOffset = entryListY - (int) (scrollAmount % entryHeight);
 
-        DataStorage data = WorldDataManager.getOverworldData();
-        entries = new ArrayList<>(data.getClaimedPermitEntries().stream().filter(entry -> !entry.getPlayerName().equalsIgnoreCase(getMinecraft().player.getScoreboardName())).toList());
-        entries.addAll(data.getUnclaimedPermitEntries());
+        entries.clear();
+        personalEntries.clear();
+        entries = new ArrayList<>(menu.allEntries.stream().filter(entry -> !entry.getPlayerName().equalsIgnoreCase(getMinecraft().player.getScoreboardName()) && !entry.getPlayerName().equalsIgnoreCase("unclaimed")).toList());
+        entries.addAll(menu.allEntries.stream().filter(entry -> entry.getPlayerName().equalsIgnoreCase("unclaimed")).toList());
 
         for (int i = startIndex; i < entries.size() && i < startIndex + visibleEntryCount + 1; i++) {
             PermitEntry entry = entries.get(i);
@@ -109,7 +106,7 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
 
         graphics.disableScissor();
 
-        personalEntries = new ArrayList<>(data.getPermitEntries().stream().filter(entry -> entry.getPlayerName().equalsIgnoreCase(getMinecraft().player.getScoreboardName())).toList());
+        personalEntries = new ArrayList<>(menu.allEntries.stream().filter(entry -> entry.getPlayerName().equalsIgnoreCase(getMinecraft().player.getScoreboardName())).toList());
         personalListX = this.leftPos + 251;
         personalListY = this.topPos + 57;
 
@@ -170,6 +167,8 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
     }
 
     private void renderItemEntry(GuiGraphics graphics, int x, int y, int width, PermitEntry permitEntry, boolean owned) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0f,0f,1f);
         int color = 16777215; //White
         if (permitEntry.getPlayerName().equalsIgnoreCase("unclaimed")) {
             color = 10526880; //Light Grey
@@ -185,6 +184,7 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
         } else {
             renderScrollingStringWithItem(graphics, permitEntry.getTitle() + " - " + permitEntry.getPlayerName(), permitEntry.getFirstItem(), x, y, width, 20, color);
         }
+        graphics.pose().popPose();
     }
 
 
@@ -221,18 +221,29 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
     }
 
     private void renderItemsPopup(GuiGraphics graphics, List<Item> items, int mouseX, int mouseY) {
-        // Render the item popup (e.g., draw a box with the list of items)
         int popupX = mouseX + 5;
         int popupY = mouseY + 5;
+        int length = 120;
+
+        for (var item : items) {
+            length = Math.max(length, this.font.width(item.getName(item.getDefaultInstance())) + 30);
+        }
 
         // Draw a simple box and the item names
-        graphics.fill(popupX, popupY, popupX + 120, popupY + (15 * items.size()) + 15, 0xA0000000); // Background
+        graphics.pose().pushPose();
+        graphics.pose().translate(0f,0f,20f);
+        graphics.fill(popupX, popupY, popupX + length, popupY + (15 * items.size()) + 15, 0xF0000000); // Background
+        graphics.pose().popPose();
+
+        graphics.pose().pushPose();
+        graphics.pose().translate(0f,0f,30f);
         int offset = popupY + 5;
         for (var item : items) {
             graphics.renderItem(item.getDefaultInstance(), popupX + 5, offset);
             graphics.drawString(this.font, item.getName(item.getDefaultInstance()), popupX + 25, offset + 5, 0xFFFFFF);
             offset += 15; // Adjust space for each item
         }
+        graphics.pose().popPose();
     }
 
     @Override
@@ -270,6 +281,7 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
 
             if (pMouseY >= personalListY && pMouseY >= personalYOffset && pMouseY <= personalYOffset + entryHeight - 5 && pMouseY < personalListY + entryListHeight && pMouseX >= personalListX && pMouseX <= personalListX + personalListWidth) {
                 PacketHandler.INSTANCE.sendToServer(new PermitAccomplishedPacket(personalEntries.get(i).getTitle()));
+                personalEntries.get(i).setAccomplished(!personalEntries.get(i).getAccomplished());
                 return true;
             }
             personalYOffset += entryHeight;

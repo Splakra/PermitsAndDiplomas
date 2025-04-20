@@ -1,19 +1,11 @@
 package net.splakra.permitsanddiplomas.network;
 
-import net.minecraft.client.particle.FireworkParticles;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
 import net.splakra.permitsanddiplomas.storage.WorldDataManager;
-import net.splakra.permitsanddiplomas.util.CustomUtils;
 import net.splakra.permitsanddiplomas.util.ServerUtils;
 
 import java.util.function.Supplier;
@@ -48,7 +40,7 @@ public class PermitAccomplishedPacket {
             data.toggleAccomplished(pkt.title);
 
             ServerUtils.spawnRing(player,1,50);
-            player.playSound(SoundEvents.FIREWORK_ROCKET_TWINKLE,0.3f,1f);
+            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.BLOCKS, 0.4f, 2f);
         });
         ctx.setPacketHandled(true);
     }

@@ -12,7 +12,6 @@ import net.splakra.permitsanddiplomas.config.CommonConfig;
 import net.splakra.permitsanddiplomas.item.ModCreativeModeTabs;
 import net.splakra.permitsanddiplomas.item.ModItems;
 import net.splakra.permitsanddiplomas.storage.WorldDataManager;
-import net.splakra.permitsanddiplomas.ui.CustomInventoryScreen;
 import net.splakra.permitsanddiplomas.ui.ModMenus;
 import net.splakra.permitsanddiplomas.network.PacketHandler;
 import net.splakra.permitsanddiplomas.ui.ModScreens;
