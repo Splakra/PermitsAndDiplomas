@@ -32,6 +32,7 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
     private double personalScrollAmount = 0;
     private final int entryHeight = 25;
     private int visibleEntryCount = 10;
+    private int personalVisibleEntryCount = 4;
 
     private final int windowHeight = 256;
     private final int windowWidth = 381;
@@ -110,13 +111,15 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
         personalListX = this.leftPos + 251;
         personalListY = this.topPos + 57;
 
+        personalVisibleEntryCount = personalListHeight / entryHeight + 2;
+
         int personalStartIndex = (int) (personalScrollAmount / entryHeight);
         int personalYOffset = personalListY - (int) (personalScrollAmount % entryHeight);
 
 
         graphics.enableScissor(personalListX, personalListY, personalListX + personalListWidth, personalListY + personalListHeight);
 
-        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + 1 + 1; i++) {
+        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + personalVisibleEntryCount + 1; i++) {
             PermitEntry entry = personalEntries.get(i);
             if (mouseY >= personalListY && mouseY >= personalYOffset && mouseY <= personalYOffset + entryHeight - 5 && mouseY < personalListY + entryListHeight && mouseX >= personalListX && mouseX <= personalListX + personalListWidth) {
                 hoverOffset = 40;
@@ -155,10 +158,9 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
             yOffset += entryHeight;
         }
 
-        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + 1 + 1; i++) {
-            if (personalYOffset > personalListY + 4 * entryHeight) break;
+        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + personalVisibleEntryCount + 1; i++) {
 
-            if (mouseY >= personalListY && mouseY >= personalYOffset && mouseY <= personalYOffset + entryHeight - 5 && mouseY < personalListY + entryListHeight && mouseX >= personalListX && mouseX <= personalListX + personalListWidth) {
+            if (mouseY >= personalListY && mouseY >= personalYOffset && mouseY <= personalYOffset + entryHeight - 5 && mouseY < personalListY + personalListHeight && mouseX >= personalListX && mouseX <= personalListX + personalListWidth) {
                 renderItemsPopup(graphics, personalEntries.get(i).getItems(), mouseX, mouseY);
                 break;
             }
@@ -249,9 +251,9 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
     @Override
     public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
         int totalHeight = entries.size() * entryHeight;
-        int visibleHeight = visibleEntryCount * entryHeight;
-        int scrollRange = Math.max(0, totalHeight - visibleHeight + 10);
-        int personalScrollRange = Math.max(0, (entryHeight * 4) - (entryHeight * 1) + 10);
+        int visibleHeight = (visibleEntryCount - 1 )* entryHeight;
+        int scrollRange = Math.max(0, (totalHeight - visibleHeight) + 10);
+        int personalScrollRange = Math.max(0, (personalEntries.size() * entryHeight) - ((personalVisibleEntryCount - 1) * entryHeight) + entryHeight);
 
         if (pMouseX > entryListX && pMouseX < entryListX + entryListWidth && pMouseY > entryListY && pMouseY < entryListY + entryListHeight) {
             scrollAmount -= pDelta * 15;
@@ -276,8 +278,8 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
         int personalStartIndex = (int) (personalScrollAmount / entryHeight);
         int personalYOffset = personalListY - (int) (personalScrollAmount % entryHeight);
 
-        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + 1 + 1; i++) {
-            if (personalYOffset > personalListY + 4 * entryHeight) break;
+        for (int i = personalStartIndex; i < personalEntries.size() && i < personalStartIndex + personalVisibleEntryCount + 1; i++) {
+            if (personalYOffset > personalListY + personalVisibleEntryCount * entryHeight) break;
 
             if (pMouseY >= personalListY && pMouseY >= personalYOffset && pMouseY <= personalYOffset + entryHeight - 5 && pMouseY < personalListY + entryListHeight && pMouseX >= personalListX && pMouseX <= personalListX + personalListWidth) {
                 PacketHandler.INSTANCE.sendToServer(new PermitAccomplishedPacket(personalEntries.get(i).getTitle()));
