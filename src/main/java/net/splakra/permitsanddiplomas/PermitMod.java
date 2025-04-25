@@ -31,7 +31,6 @@ public class PermitMod
     public PermitMod(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
-        IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
         //Register the new creative mode tabs
         ModCreativeModeTabs.register(modEventBus);
@@ -45,12 +44,6 @@ public class PermitMod
         //Register the PacketHandler and the Menu which uses it
         PacketHandler.register();
         ModMenus.register(modEventBus);
-
-        // ─── FIX #1: register our ScreenEvent listener ───
-        forgeEventBus.register(ClientModEvents.class);
-
-        // ─── FIX #2: register screen<->menu bindings on the MOD bus ───
-        modEventBus.addListener(ModScreens::onClientSetup);
 
         //Register the config
         context.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC, "permits_and_diplomas-common-config.toml");
