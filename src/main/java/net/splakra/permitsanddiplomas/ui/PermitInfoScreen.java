@@ -1,6 +1,7 @@
 package net.splakra.permitsanddiplomas.ui;
 
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -231,10 +232,13 @@ public class PermitInfoScreen extends AbstractContainerScreen<PermitInfoMenu> {
             length = Math.max(length, this.font.width(item.getName(item.getDefaultInstance())) + 30);
         }
 
+        int popupHeight = (15 * items.size()) + 15;
+        if (popupY+ popupHeight >= height) popupY = height - popupHeight - 2;
+
         // Draw a simple box and the item names
         graphics.pose().pushPose();
         graphics.pose().translate(0f,0f,20f);
-        graphics.fill(popupX, popupY, popupX + length, popupY + (15 * items.size()) + 15, 0xF0000000); // Background
+        graphics.fill(popupX, popupY, popupX + length, popupY + popupHeight, 0xF0000000); // Background
         graphics.pose().popPose();
 
         graphics.pose().pushPose();
